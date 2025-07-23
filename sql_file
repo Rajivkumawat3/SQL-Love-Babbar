@@ -1,0 +1,408 @@
+DATABASE IF NOT EXISTS ORG;
+DROP DATABASE IF EXISTS test2;
+USE ORG;
+
+CREATE TABLE Worker 
+( 
+  Worker_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,  
+  First_Name CHAR(25),
+  Last_Name CHAR(25),
+  Salary INT(15),
+  Joining_Date DATETIME,
+  Department CHAR(25)
+);   
+
+Insert INTO Worker 
+    (Worker_id, First_Name, Last_Name, Salary, Joining_Date, Department) 
+    VALUES
+    (001, 'Monika' , 'Arora', 100000, '14-02-20 09:00:00'  , 'HR'),
+    (002, 'Niharika' , 'Verma', 80000, '14-06-11 09:00:00' , 'Admin'),
+    (003, 'Vishal' , 'Singhal', 300000, '14-02-20 09:00:00' , 'HR'),
+    (004, 'Amitabh' , 'Singh', 500000, '14-02-20 09:00:00' , 'Admin'),
+    (005, 'Vivek' , 'Bhati', 500000, '14-06-11 09:00:00' , 'Admin'), 
+    (006, 'Vipul' , 'Diwan' , 200000 , '14-06-11 09:00:00' , 'Account'),
+    (007, 'Satish' , 'Kumar' , 75000, '14-01-20 09:00:00' , 'Account'),
+    (008, 'Geetika' , 'Chauhan' , 90000, '14-04-11 09:00:00' , 'Admin'); 
+    
+    
+   SELECT * FROM Worker; 
+    
+    
+-- References from the Main Table 'Worker'
+-- Stores the Amount of Bonus being given to some Worker Corresponding to their 'Worker_id'
+CREATE TABLE Bonus (
+	WORKER_REF_ID INT,
+	BONUS_AMOUNT INT(10),
+	BONUS_DATE DATETIME,
+	FOREIGN KEY (WORKER_REF_ID)
+		REFERENCES Worker(WORKER_ID)
+    ON DELETE CASCADE
+);
+
+INSERT INTO Bonus
+       (WORKER_REF_ID , BONUS_AMOUNT , BONUS_DATE)
+       VALUES
+       (001, 5000, '16-02-20'),
+		   (002, 3000, '16-06-11'),
+		   (003, 4000, '16-02-20'),
+		   (001, 4500, '16-02-20'),
+		   (002, 3500, '16-06-11');
+		   
+SELECT * FROM Bonus;
+
+    -- References the Main Table 'Worker'
+-- Stores the Title assigned to a worker Corresponding to their 'Worker_id'
+CREATE TABLE Title (
+	WORKER_REF_ID INT,
+	WORKER_TITLE CHAR(25),
+	AFFECTED_FROM DATETIME,
+	FOREIGN KEY (WORKER_REF_ID)
+		REFERENCES Worker(WORKER_ID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+INSERT INTO Title
+         (WORKER_REF_ID , WORKER_TITLE , AFFECTED_FROM)
+         VALUES
+          (001, 'Manager', '2016-02-20 00:00:00'),
+          (002, 'Executive', '2016-06-11 00:00:00'),
+          (008, 'Executive', '2016-06-11 00:00:00'),
+          (005, 'Manager', '2016-06-11 00:00:00'),
+          (004, 'Asst. Manager', '2016-06-11 00:00:00'),
+          (007, 'Executive', '2016-06-11 00:00:00'),
+          (006, 'Lead', '2016-06-11 00:00:00'),
+          (003, 'Lead', '2016-06-11 00:00:00');
+    
+SELECT * FROM Title;
+    
+
+
+
+--  Query1
+-- Write an SQL query to fetch “FIRST_NAME” from Worker table using the alias name as <WORKER_NAME>.
+
+
+SELECT  First_Name AS WORKER_NAME FROM Worker 
+ 
+-- Query 2
+-- Write an SQL query to fetch “FIRST_NAME” from Worker table in upper case
+
+SELECT  UCASE(First_Name) FROM Worker 
+ 
+SELECT  UPPER(First_Name) FROM Worker 
+ 
+-- Query 3
+-- Write an SQL query to fetch unique values of DEPARTMENT from Worker table.
+ 
+ SELECT DISTINCT(Department) FROM Worker
+  SELECT Department from Worker group by Department
+  
+-- Query 4(good)
+-- Write an SQL query to print the first three characters of  FIRST_NAME from Worker table.
+
+SELECT (SUBSTRING(First_Name,1,3) FROM Worker 
+
+-- Query 5 (good)
+--  Write an SQL query to find the position of the alphabet (‘b’) in the first name column ‘Amitabh’ from Worker table.
+
+SELECT INSTR(First_Name,'b')  FROM Worker WHERE First_Name='Amitabh'
+
+-- In SQL, LTRIM and RTRIM are string functions used to remove spaces from the beginning and end of a string, 
+-- Query 6
+-- Write an SQL query to print the FIRST_NAME from Worker table after removing white spaces from the right side.
+-- LTRIM() would remove it from the left Side.
+
+SELECT  RTRIM(First_Name) from Worker
+
+-- Query 7
+-- Write an SQL query to print the DEPARTMENT from Worker table after removing white spaces from the left side.
+SELECT  LTRIM(First_Name) from Worker
+
+-- Query 8
+-- Write an SQL query that fetches the unique values of DEPARTMENT from Worker table and prints its length.
+-- Length() Function is used to find the length of the string in a Table.
+
+Select Distinct Department,LENGTH(Department) from Worker
+
+-- Query 9
+-- Write an SQL query to print the FIRST_NAME from Worker table after replacing ‘a’ with ‘A’.
+-- REPLACE(string, from_string, new_string)
+
+   SELECT REPLACE(First_Name,'a','A') from Worker
+   
+-- Query 10
+-- Write an SQL query to print the FIRST_NAME and LAST_NAME from Worker table into a single column COMPLETE_NAME.
+
+    Select CONCAT(First_Name,' ',Last_Name) AS COMPLETE_NAME from Worker;
+
+-- Query 11
+-- Write an SQL query to print all Worker details from the Worker table order by FIRST_NAME Ascending.
+-- By default, the Order that is given out would be in Ascending Order, therefore it is not important to mention the 'ASC' Clause
+
+    SELECT * FROM Worker order by First_Name ASC; 
+    
+-- Query 12
+-- Write an SQL query to print all Worker details from the Worker table order by 
+-- FIRST_NAME Ascending and DEPARTMENT Descending.
+-- The order by clause can be passed multiple statements & not just ordering by some single column!
+
+ SELECT * FROM Worker ORDER BY First_Name ASC, Department DESC;
+
+-- Query 13
+-- Write an SQL query to print details for Workers with the first name as “Vipul” and “Satish” from Worker table.
+-- 'IN' Keyword can be used to pass Multiple Possible Arguments for the column being asked values from.
+
+SELECT * FROM Worker WHERE First_Name IN ('Vipul' , 'Satish')
+
+-- Query 14
+-- Write an SQL query to print details of workers excluding first names, “Vipul” and “Satish” from Worker table.
+-- The 'NOT' Keyword would exclude the values given in the Arguments mentioned by the user.
+
+SELECT * FROM Worker WHERE First_Name NOT IN ('Vipul' , 'Satish')
+
+
+-- Query 15
+-- Write an SQL query to print details of Workers with DEPARTMENT name as “Admin*”.
+-- The '*' means that after the 'admin' text you can have any text & it would be still shown in the results.
+-- Therefore, we'll be using Wildcards here.
+
+SELECT * FROM Worker WHERE Department LIKE 'Admin%'
+
+-- Query 16
+-- Write an SQL query to print details of the Workers whose FIRST_NAME contains ‘a’.
+-- The '%' sign is helpul where there are no characters [NULL Character] or even when they are there, there can be n number of characters
+
+SELECT * FROM Worker WHERE First_Name LIKE '%a%'
+
+
+-- Query 17
+-- Write an SQL query to print details of the Workers whose FIRST_NAME ends with ‘a’.
+
+SELECT * FROM Worker WHERE First_Name LIKE '%a'
+
+-- Query 18
+-- Write an SQL query to print details of the Workers whose FIRST_NAME ends with ‘h’ and contains six alphabets.
+
+SELECT * FROM Worker WHERE First_Name LIKE ('%h') AND LENGTH(First_Name)=6
+SELECT * FROM Worker WHERE First_Name LIKE ('_____h') 
+
+-- Query 19
+-- Write an SQL query to print details of the Workers whose SALARY lies between 100000 and 500000.
+
+SELECT * FROM Worker WHERE SALARY BETWEEN 100000 AND 500000
+
+-- Query 20
+-- Write an SQL query to print details of the Workers who have joined in Feb’2014.
+
+SELECT * FROM Worker WHERE Joining_Date LIKE ('2014-02%')
+
+SELECT * FROM Worker  WHERE YEAR(Joining_Date)=2014 AND MONTH(Joining_Date)=02
+
+-- Query 21
+-- Write an SQL query to fetch the count of employees working in the department ‘Admin’.
+-- We'll Have to use the 'Aggregate' functions here - they perform calculations on a set of values & return a single value.
+
+SELECT COUNT(Department) FROM Worker GROUP BY Department HAVING Department='Admin'
+SELECT Department,COUNT(*) FROM Worker WHERE Department='Admin'
+
+-- Query 22
+-- Write an SQL query to fetch worker full names with salaries >= 50000 and <= 100000.
+ 
+    SELECT CONCAT( First_Name,' ',Last_Name) AS Full_Name FROM Worker WHERE Salary BETWEEN 50000 AND 100000
+
+-- Query 23
+-- Write an SQL query to fetch the no. of workers for each department in the descending order.
+-- Clearly, Grouping requires to be done here!
+
+SELECT Department,COUNT(*) AS no_of_worker FROM Worker GROUP BY Department ORDER BY COUNT(*) DESC
+
+-- Query 24
+-- Write an SQL query to print details of the Workers who are also Managers.
+
+  SELECT * FROM Worker AS W INNER JOIN Title AS T ON W.Worker_id=T.WORKER_REF_ID AND T.WORKER_TITLE='Manager'
+
+
+-- Query 25
+-- Write an SQL query to fetch number (more than 1) of same titles in the ORG of different types.
+
+	SELECT WORKER_TITLE,COUNT(WORKER_TITLE) FROM Title GROUP BY WORKER_TITLE HAVING COUNT(WORKER_TITLE)>1
+    SELECT WORKER_TITLE,COUNT(*) AS count_worker FROM Title GROUP BY WORKER_TITLE HAVING COUNT(*)>1
+
+
+-- Query 26 [An IMPORTANT interesting Query]
+-- Write an SQL query to show only odd rows from a table.
+
+ SELECT * FROM Worker WHERE Worker_id%2 IN(1)
+
+-- Query 27
+-- Write an SQL query to show only even rows from a table.
+
+SELECT * FROM Worker WHERE Worker_id%2 IN(0)
+
+
+-- Query 28
+-- Write an SQL query to clone a new table from another table.
+  
+CREATE TABLE worker_clone LIKE Worker
+
+INSERT INTO worker_clone SELECT * FROM Worker
+
+SELECT * FROM worker_clone
+
+-- Query 29
+-- Write an SQL query to fetch INTERSECTING records of two tables.
+
+SELECT w.*, t.*
+FROM Worker AS w
+INNER JOIN Title AS t ON w.Worker_id = t.WORKER_REF_ID;
+
+
+-- Query 30
+-- Write an SQL query to show records from one table that another table does not have.
+
+SELECT w.* FROM Worker AS w LEFT JOIN Bonus AS t ON w.Worker_id = t.WORKER_REF_ID WHERE t.WORKER_REF_ID IS NULL;
+
+-- Query 31
+-- Write an SQL query to show the current date and time.
+
+SELECT curdate()
+SELECT NOW()
+-- Query 32
+-- Write an SQL query to show the top n (say 5) records of a table order by salary in  descending salary.
+
+SELECT * FROM Worker ORDER BY Salary DESC LIMIT 5
+
+-- Query 33
+-- Write an SQL query to determine the nth (say n=5) highest salary from a table.
+
+
+SELECT * FROM Worker ORDER BY Salary DESC LIMIT 4,1
+
+
+-- Query 35
+-- Write an SQL query to fetch the list of employees with the same salary.
+
+SELECT w1.*,w2.* FROM Worker AS w1 INNER JOIN Worker AS w2 ON w1.salary=w2.salary AND w1.Worker_id!=w2.Worker_id
+
+-- Query 36
+-- Write an SQL query to show the second highest salary from a table using sub-query.
+
+SELECT MAX(Salary) From Worker WHERE Salary NOT IN(SELECT MAX(Salary) FROM Worker)
+
+-- Query 37
+-- Write an SQL query to show one row twice in results from a table. [Not a that useful query but it is useful in clearing the concept about Unions]
+
+SELECT * FROM Worker 
+UNION ALL
+SELECT * FROM Worker
+
+-- Query 38
+-- Write an SQL query to list worker_id who does not get bonus.
+
+SELECT w.Worker_id FROM Worker AS w
+LEFT JOIN Bonus AS b ON 
+w.Worker_id=b.WORKER_REF_ID
+WHERE b.WORKER_REF_ID IS NULL
+
+SELECT Worker_id FROM Worker WHERE Worker_id NOT IN (SELECT WORKER_REF_ID FROM Bonus)
+
+-- Query 39
+-- Write an SQL query to fetch the first 50% records from a table.
+
+ SELECT Worker_id FROM Worker WHERE Worker_id <= (SELECT COUNT(*)/2 FROM Worker);
+
+-- Query 40
+-- Write an SQL query to fetch the departments that have less than 4 people in it.
+
+ SELECT Department,COUNT(Department) AS Count_department FROM Worker GROUP BY Department HAVING COUNT(Department)<4 
+
+-- Query 41
+-- Write an SQL query to show all departments along with the number of people in there.
+
+ SELECT Department,COUNT(Department) AS Count_department FROM Worker GROUP BY Department 
+
+
+-- Query 42 [Interesting]
+-- Write an SQL query to show the last record from a table.
+
+SELECT * FROM Worker WHERE Worker_id = ( SELECT MAX(Worker_id) FROM Worker )
+
+-- Query 43
+-- Write an SQL query to fetch the first row of a table.
+
+SELECT * FROM Worker WHERE Worker_id = ( SELECT MIN(Worker_id) FROM Worker )
+
+-- Query 44
+-- Write an SQL query to fetch the last five records from a table.
+
+SELECT * FROM (SELECT * FROM Worker ORDER BY Worker_id DESC LIMIT 5) AS Temp ORDER BY Worker_id
+
+-- Query 45
+-- Write an SQL query to print the name of employees having the highest salary in each department.
+
+ SELECT w.First_Name,t.* FROM Worker AS w  INNER JOIN 
+ (SELECT MAX(SALARY) AS max_salary,Department From Worker GROUP BY Department ) AS t
+ ON w.Salary=t.max_salary AND w.Department=t.Department
+  
+  
+  select concat(first_Name,' ' , Last_Name) as full_name,Department  from Worker where (department,salary) in ( 
+	select Department,max(Salary) from Worker group by Department
+ );
+ 
+-- Query 46
+-- Write an SQL query to fetch three max salaries from a table using co-related subquery.
+
+SELECT DISTINCT Salary FROM Worker ORDER BY Salary DESC LIMIT 3
+ 
+-- For each salary in the table, count how many higher salaries are above it.
+-- If the count is less than 3, include that salary.
+
+
+SELECT DISTINCT Salary FROM Worker AS w1 WHERE  3 >=
+(SELECT COUNT(DISTINCT Salary) FROM Worker AS w2 WHERE w2.Salary>=w1.Salary)
+ORDER BY w1.Salary DESC
+
+-- Query 47
+-- Write an SQL query to fetch three min salaries from a table using co-related subquery
+
+SELECT DISTINCT Salary FROM Worker AS w1 WHERE  3 >=
+(SELECT COUNT(DISTINCT Salary) FROM Worker AS w2 WHERE w2.Salary<=w1.Salary) ORDER BY w1.Salary DESC
+
+SELECT DISTINCT Salary
+FROM Worker w1
+WHERE (
+  SELECT COUNT(DISTINCT Salary)
+  FROM Worker w2
+  WHERE w2.Salary <= w1.Salary
+) <= 3
+ORDER BY Salary ASC;
+
+
+-- Query 48
+-- Write an SQL query to fetch nth max salaries from a table.
+
+SELECT Salary
+FROM Worker w1
+WHERE (
+  SELECT COUNT(DISTINCT Salary)
+  FROM Worker w2
+  WHERE w2.Salary >= w1.Salary
+) = 2
+
+
+
+-- Query 49
+-- Write an SQL query to fetch departments along with the total salaries paid for each of them.
+
+      SELECT Department,SUM(Salary) AS dept_sal FROM Worker GROUP BY Department ORDER BY SUM(Salary)  DESC
+
+-- Query 50
+-- Write an SQL query to fetch the names of workers who earn the highest salary.
+
+SELECT Salary,First_Name FROM Worker WHERE Salary IN (SELECT MAX(Salary) FROM Worker)
+
+-- Query 51
+-- Remove the Reversed Number Pair from the given Table
+    
+ 
